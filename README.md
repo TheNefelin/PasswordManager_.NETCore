@@ -1,0 +1,1 @@
+# PasswordManager_.NETCore
