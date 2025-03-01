@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MauiAppAdmin.ViewModels"
+             x:Class="MauiAppAdmin.Views.LoginPage"
+             Title="LoginPage">
+
+
+    <Grid>
+        <VerticalStackLayout Padding="20">
+            <Entry Text="{Binding Auth.Email}" IsEnabled="{Binding !IsLoading}" Placeholder="Usuario"/>
+            <Entry Text="{Binding Auth.Password}" IsPassword="True" IsEnabled="{Binding !IsLoading}" Placeholder="Contraseña"/>
+            <Button Command="{Binding LoginCommand}" IsEnabled="{Binding !IsLoading}" Text="Iniciar Sesión"/>
+            <Label Text="{Binding ErrorMessage}" IsVisible="{Binding IsErrorVisible}" TextColor="Red"/>
+        </VerticalStackLayout>
+
+        <Grid IsVisible="{Binding IsLoading}" BackgroundColor="Black" Opacity="0.5">
+            <ActivityIndicator IsRunning="True" Color="White" VerticalOptions="Center" HorizontalOptions="Center"/>
+        </Grid>
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiAppAdmin.Views.ProfilePage"
+             Title="Profile">
+
+    <ScrollView Padding="15">
+        <VerticalStackLayout Spacing="15">
+            <VerticalStackLayout>
+                <Label Text="ID Usuario:" FontSize="Medium" FontAttributes="Bold"/>
+                <Label Text="{Binding Auth.IdUser}"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Rol:" FontSize="Medium" FontAttributes="Bold"/>
+                <Label Text="{Binding Auth.Role}"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Fecha de Login:" FontSize="Medium" FontAttributes="Bold"/>
+                <Label Text="{Binding LoginDate}"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Tiempo de Expiración:" FontSize="Medium" FontAttributes="Bold"/>
+                <Label Text="{Binding Auth.ExpireMin}"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Expira en:" FontSize="Medium" FontAttributes="Bold"/>
+                <Label Text="{Binding CountDown}"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Sql Token" FontSize="Medium" FontAttributes="Bold"/>
+                <Label Text="{Binding Auth.SqlToken}"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="Api Token:" FontSize="Medium" FontAttributes="Bold"/>
+                <Label Text="{Binding Auth.ApiToken}"/>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>
