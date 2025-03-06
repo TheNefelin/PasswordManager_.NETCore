@@ -23,6 +23,9 @@ namespace MauiAppAdmin.ViewModels
         [ObservableProperty]
         private bool isLoading = false;
 
+        [ObservableProperty]
+        private bool isEnabled = true;
+
         public LoginViewModel(IApiAuthService apiAuthService, IServiceProvider serviceProvider)
         {
             _apiAuthService = apiAuthService;
@@ -42,14 +45,18 @@ namespace MauiAppAdmin.ViewModels
             }
 
             IsLoading = true;
+            IsEnabled = !IsLoading;
+
             var response = await _apiAuthService.LoginAsync(Auth);
 
             if (!response.IsSucces)
             {
                 //await Shell.Current.DisplayAlert($"Error {response.StatusCode}", response.Message, "OK");
-                ErrorMessage = $"Error: { response.StatusCode }, { response.Message }";
+                ErrorMessage = $"Error: {response.StatusCode}, { response.Message }";
                 IsErrorVisible = true;
+              
                 IsLoading = false;
+                IsEnabled = !IsLoading;
 
                 return;
             }
@@ -66,6 +73,7 @@ namespace MauiAppAdmin.ViewModels
             Application.Current!.OpenWindow(new Window(loginPage));
 
             IsLoading = false;
+            IsEnabled = !IsLoading;
         }
     }
 

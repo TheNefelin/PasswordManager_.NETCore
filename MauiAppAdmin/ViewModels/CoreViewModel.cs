@@ -1,5 +1,7 @@
-﻿using ClassLibrary.Models;
+﻿using AndroidX.Emoji2.Text.FlatBuffer;
+using ClassLibrary.Models;
 using ClassLibrary.Models.DTOs;
+using ClassLibrary.Models.Utils;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -15,20 +17,30 @@ namespace MauiAppAdmin.ViewModels
         private readonly IApiCoreService _apiCoreService;
 
         [ObservableProperty]
-        private bool isLoading = false;
+        private bool _isLoading = false;
+
+        [ObservableProperty]
+        private bool _isEnabled = true;
+
+        [ObservableProperty]
+        private string _searchText;
 
         [ObservableProperty]
         private ObservableCollection<CoreDTO> _coreList = new();
 
-        public ICommand DownloadCommand { get; }
+        private List<CoreDTO> _allCoreList = new();
+
         public ICommand ClearCommand { get; }
+        public ICommand DownloadCommand { get; }
         public ICommand PasswordDialogCommand { get; }
+        public ICommand SearchTextCommand { get; }
 
         public CoreViewModel(IApiCoreService apiCoreService)
         {
-            DownloadCommand = new RelayCommand(OnDownload);
             ClearCommand = new RelayCommand(OnClearCoreList);
+            DownloadCommand = new RelayCommand(OnDownload);
             PasswordDialogCommand = new RelayCommand(OnShowPasswordDialog);
+            SearchTextCommand = new RelayCommand<string>(OnSearchTextChanged);
             _apiCoreService = apiCoreService;
         }
 
@@ -39,7 +51,8 @@ namespace MauiAppAdmin.ViewModels
 
         private async void OnDownload()
         {
-            IsLoading = true;
+            Disable();
+            CoreList.Clear();
 
             var loggedUser = await Storage.GetUser();
 
@@ -53,20 +66,19 @@ namespace MauiAppAdmin.ViewModels
 
             if (!responseApi.IsSucces)
             {
+                await Shell.Current.DisplayAlert($"Error: {responseApi.StatusCode}", responseApi.Message, "OK");
+
+                Enable();
                 return;
             }
 
-            CoreList.Clear();
+            CoreList = new ObservableCollection<CoreDTO>(responseApi.Data);
+            _allCoreList = new List<CoreDTO>(responseApi.Data);
 
-            foreach (CoreDTO item in responseApi.Data)
-            {
-                CoreList.Add(item);
-            }
-
-            IsLoading = false;
+            Enable();
         }
 
-        private void OnShowPasswordDialog()
+        private async void OnShowPasswordDialog()
         {
             var popup = new PasswordPopup();
             popup.PasswordSubmitted += OnPasswordEntered;
@@ -75,7 +87,101 @@ namespace MauiAppAdmin.ViewModels
 
         private void OnPasswordEntered(object sender, string password)
         {
-            var ps = password;
+            _ = HandlePasswordAsync(password);
+        }
+
+        private async Task HandlePasswordAsync(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password)) return;
+            Disable();
+
+            var (coreRequest, apiKeyToken) = await GetCoreRequestToken<object>(null);
+            coreRequest.Password = password;
+
+            var responseApi = await _apiCoreService.GetIVAsync(coreRequest, apiKeyToken);
+
+            if (!responseApi.IsSucces)
+            {
+                await Shell.Current.DisplayAlert($"Error: ${responseApi.StatusCode}", responseApi.Message, "OK");
+
+                Enable();
+                return;
+            }
+
+            if (CoreList.Count > 0 && !IsBase64String(CoreList[0].Data01))
+            {
+                await Shell.Current.DisplayAlert("Error", "La Lista ya está Descifrado.", "Ok");
+
+                Enable();
+                return;
+            }
+
+            var codex = new EncryptionUtil();
+
+            CoreList = new ObservableCollection<CoreDTO>(
+                CoreList
+                    .Select(item => codex.DecryptData(item, password, responseApi.Data.IV))
+                    .OrderBy(x => x.Data01)
+            );
+
+            Disable();
+        }
+
+        partial void OnSearchTextChanged(string value)
+        {
+            Console.WriteLine($"Texto buscado: {value}");
+
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                CoreList = new ObservableCollection<CoreDTO>(_allCoreList);
+            }
+            else
+            {
+                var filtrados = _allCoreList
+                    .Where(x => x.Data01.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                CoreList = new ObservableCollection<CoreDTO>(filtrados);
+            }
+        }
+
+        private async Task<(CoreRequest<T>, string)> GetCoreRequestToken<T>(T obj)
+        {
+            var loggedUser = await Storage.GetUser();
+
+            var apiKeyToken = loggedUser.ApiToken;
+
+            var coreRequest = new CoreRequest<T>
+            {
+                IdUser = loggedUser.IdUser,
+                SqlToken = loggedUser.SqlToken,
+                CoreData = obj
+            };
+
+            return (coreRequest, apiKeyToken);
+        }
+
+        private bool IsBase64String(string base64String)
+        {
+            if (string.IsNullOrEmpty(base64String))
+            {
+                return false;
+            }
+
+            Span<byte> buffer = new Span<byte>(new byte[base64String.Length]);
+            return Convert.TryFromBase64String(base64String, buffer, out _);
+        }
+
+        private void Enable()
+        {
+            IsLoading = false;
+            IsEnabled = true;
+        }
+
+        private void Disable()
+        {
+            IsLoading = true;
+            IsEnabled = false;
         }
     }
 }

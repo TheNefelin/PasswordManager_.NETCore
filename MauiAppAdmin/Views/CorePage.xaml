@@ -1,111 +1,109 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"             
+             xmlns:components="clr-namespace:MauiAppAdmin.Components;"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Toolkit.Buttons;assembly=Syncfusion.Maui.Toolkit"
              x:Class="MauiAppAdmin.Views.CorePage"
              Title="Password Manager">
 
-    <Grid Padding="10">
+    <Grid>
+        <Image Source="background.webp" Aspect="AspectFill"/>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <Grid Padding="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <HorizontalStackLayout Grid.Row="0" Spacing="10">
-            <!-- Botón 1 -->
-            <Border StrokeThickness="2" WidthRequest="80" HeightRequest="80" Padding="0">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ClearCommand}"/>
-                </Border.GestureRecognizers>
+            <HorizontalStackLayout Grid.Row="0" Spacing="10">
+                <buttons:SfButton
+                    IsEnabled="{Binding IsEnabled}"
+                    Command="{Binding ClearCommand}"
+                    Background="DarkRed"
+                    Text="Clear" TextColor="white" FontSize="11" 
+                    ImageSource="icon_shattered_512.png" ImageAlignment="Top" ImageSize="35" ShowIcon="True" WidthRequest="80" HeightRequest="80" Stroke="White" StrokeThickness="2" CornerRadius="8"
+                />
 
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10"/>
-                </Border.StrokeShape>
+                <buttons:SfButton
+                    IsEnabled="{Binding IsEnabled}"
+                    Command="{Binding DownloadCommand}"
+                    Background="DarkOrange"
+                    Text="Download" TextColor="white" FontSize="11" 
+                    ImageSource="icon_download_512.png" ImageAlignment="Top" ImageSize="35" ShowIcon="True" WidthRequest="80" HeightRequest="80" Stroke="White" StrokeThickness="2" CornerRadius="8"
+                />
 
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                    <Image Source="icon_shattered_512.png" WidthRequest="36" HorizontalOptions="Center" Aspect="AspectFit"/>
-                    <Label Text="Limpiar" HorizontalTextAlignment="Center" FontSize="Micro"/>
-                </VerticalStackLayout>
+                <buttons:SfButton
+                    IsEnabled="{Binding IsEnabled}"
+                    Command="{Binding PasswordDialogCommand}"
+                    Background="Black"
+                    Text="Decrypt" TextColor="white" FontSize="11" 
+                    ImageSource="icon_decrypted_512.png" ImageAlignment="Top" ImageSize="35" ShowIcon="True" WidthRequest="80" HeightRequest="80" Stroke="White" StrokeThickness="2" CornerRadius="8"
+                />
+            </HorizontalStackLayout>
+
+            <Border Grid.Row="1" Margin="0,10" Stroke="White" StrokeThickness="1" BackgroundColor="Black" Padding="20,10">
+                <Entry Text="{Binding SearchText}" Placeholder="Buscar..">
+                    <Entry.Behaviors>
+                        <components:TextChangedBehavior Command="{Binding SearchTextCommand}" />
+                    </Entry.Behaviors>
+                </Entry>
             </Border>
 
-            <!-- Botón 2 -->
-            <Border StrokeThickness="2" WidthRequest="80" HeightRequest="80" Padding="0">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding DownloadCommand}"/>
-                </Border.GestureRecognizers>
+            <VerticalStackLayout Grid.Row="2" Padding="20,10" BackgroundColor="{StaticResource BackgroundColor80}">
+                <Label Text="List de Secretos" FontSize="20" BackgroundColor="Transparent"/>
+            </VerticalStackLayout>
 
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10"/>
-                </Border.StrokeShape>
+            <!-- ScrollView para el contenido expandible -->
 
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                    <Image Source="icon_download_512.png" WidthRequest="36" HorizontalOptions="Center" Aspect="AspectFit"/>
-                    <Label Text="Descargar" HorizontalTextAlignment="Center" FontSize="Micro"/>
-                </VerticalStackLayout>
-            </Border>
+            <ScrollView Grid.Row="3" Background="{StaticResource BackgroundColor80}" Padding="10">
+                <CollectionView ItemsSource="{Binding CoreList}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
 
-            <!-- Botón 3 -->
-            <Border StrokeThickness="2" WidthRequest="80" HeightRequest="80" Padding="0">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding PasswordDialogCommand}"/>
-                </Border.GestureRecognizers>
+                            <Border Stroke="Gray" StrokeThickness="1" >
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
 
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10"/>
-                </Border.StrokeShape>
+                                <toolkit:Expander Background="Black">
+                                    <toolkit:Expander.Header>
+                                        <Label Text="{Binding Data01}" Padding="15" FontSize="18" FontAttributes="Bold"/>
+                                    </toolkit:Expander.Header>
+                                    <toolkit:Expander.Content>
+                                        <VerticalStackLayout>
+                                            <VerticalStackLayout Padding="10">
+                                                <HorizontalStackLayout Spacing="10">
+                                                    <Label Text="Usuario:       " FontAttributes="Bold"/>
+                                                    <Label Text="{Binding Data02}"/>
+                                                </HorizontalStackLayout>
+                                                <HorizontalStackLayout Spacing="10">
+                                                    <Label Text="Contraseña:" FontAttributes="Bold"/>
+                                                    <Label Text="{Binding Data03}"/>
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+                                            <HorizontalStackLayout HorizontalOptions="Center" Padding="10" Spacing="20">
+                                                <ImageButton Background="Orange" Padding="5" CornerRadius="5" Source="icon_edit_512.png" HeightRequest="40" WidthRequest="100"/>
+                                                <ImageButton Background="Red" Padding="5" CornerRadius="5" Source="icon_delete_512.png" HeightRequest="40" WidthRequest="100"/>
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+                                    </toolkit:Expander.Content>
+                                </toolkit:Expander>
+                            </Border>
+                            
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                    <Image Source="icon_decrypted_512.png" WidthRequest="36" HorizontalOptions="Center" Aspect="AspectFit"/>
-                    <Label Text="Desencriptar" HorizontalTextAlignment="Center" FontSize="Micro"/>
-                </VerticalStackLayout>
-            </Border>
-        </HorizontalStackLayout>
+            </ScrollView>
+        </Grid>
 
-        <VerticalStackLayout Grid.Row="1" Padding="20,10" Margin="0,10" Background="Black">
-            <Entry Placeholder="Buscar.." />
-        </VerticalStackLayout>
-
-        <!-- ScrollView para el contenido expandible -->
-
-        <ScrollView Grid.Row="2">
-            <CollectionView ItemsSource="{Binding CoreList}">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-
-                        <toolkit:Expander BackgroundColor="Black">
-                            <toolkit:Expander.Header>
-                                <Label Text="{Binding Data01}" Padding="20,10" FontSize="18" FontAttributes="Bold"/>
-                            </toolkit:Expander.Header>
-                            <toolkit:Expander.Content>
-                                <VerticalStackLayout>
-                                    <VerticalStackLayout Padding="10">
-                                        <HorizontalStackLayout Spacing="10">
-                                            <Label Text="Usuario:       " FontAttributes="Bold"/>
-                                            <Label Text="{Binding Data02}"/>
-                                        </HorizontalStackLayout>
-                                        <HorizontalStackLayout Spacing="10">
-                                            <Label Text="Contraseña:" FontAttributes="Bold"/>
-                                            <Label Text="{Binding Data03}"/>
-                                        </HorizontalStackLayout>
-                                    </VerticalStackLayout>
-                                    <HorizontalStackLayout HorizontalOptions="Center" Padding="10" Spacing="20">
-                                        <ImageButton Background="Orange" Padding="5" CornerRadius="5" Source="icon_edit_512.png" HeightRequest="40" WidthRequest="100"/>
-                                        <ImageButton Background="Red" Padding="5" CornerRadius="5" Source="icon_delete_512.png" HeightRequest="40" WidthRequest="100"/>
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
-                            </toolkit:Expander.Content>
-                        </toolkit:Expander>
-
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            
-        </ScrollView>
+        <components:LoadingContent IsLoading="{Binding IsLoading}"/>
     </Grid>
-
+    
 </ContentPage>

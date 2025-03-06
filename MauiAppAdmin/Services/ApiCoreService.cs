@@ -2,7 +2,6 @@
 using ClassLibrary.Models.DTOs;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
 namespace MauiAppAdmin.Services
 {
@@ -23,7 +22,17 @@ namespace MauiAppAdmin.Services
             }
         }
 
+        public async Task<ResponseApi<CoreIVDTO>> GetIVAsync(CoreRequest<object> coreRequest, string apiKeyToken)
+        {
+            return await ApiRequest<CoreIVDTO, object>("/api/core/get-iv", coreRequest, apiKeyToken);
+        }
+
         public async Task<ResponseApi<IEnumerable<CoreDTO>>> GetAllAsync(CoreRequest<object> coreRequest, string apiKeyToken)
+        {
+            return await ApiRequest<IEnumerable<CoreDTO>, object>("/api/core/get-all", coreRequest, apiKeyToken);
+        }
+
+        private async Task<ResponseApi<T>> ApiRequest<T, U>(string uri, CoreRequest<U> coreRequest, string apiKeyToken)
         {
             try
             {
@@ -32,14 +41,14 @@ namespace MauiAppAdmin.Services
                 var json = JsonConvert.SerializeObject(coreRequest);
                 var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PatchAsync("/api/core/get-all", content);
+                var response = await _httpClient.PatchAsync(uri, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
-                var responseApi = JsonConvert.DeserializeObject<ResponseApi<IEnumerable<CoreDTO>>>(responseContent);
+                var responseApi = JsonConvert.DeserializeObject<ResponseApi<T>>(responseContent);
 
                 if (responseApi.StatusCode == 0)
                 {
-                    return new ResponseApi<IEnumerable<CoreDTO>>
+                    return new ResponseApi<T>
                     {
                         IsSucces = false,
                         StatusCode = (int)response.StatusCode,
@@ -51,7 +60,7 @@ namespace MauiAppAdmin.Services
             }
             catch (Exception ex)
             {
-                return new ResponseApi<IEnumerable<CoreDTO>>()
+                return new ResponseApi<T>()
                 {
                     IsSucces = false,
                     StatusCode = 500,
