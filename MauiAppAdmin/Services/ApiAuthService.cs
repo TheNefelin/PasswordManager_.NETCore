@@ -21,21 +21,31 @@ namespace MauiAppAdmin.Services
             }
         }
 
+        public async Task<ResponseApi<UserIdDTO>> RegisterAsync(AuthRegister authRegister)
+        {
+            return await ApiRequest<UserIdDTO, AuthRegister>(authRegister, "/api/auth/register");
+        }
+
         public async Task<ResponseApi<AuthLogged>> LoginAsync(AuthLogin authLogin)
+        {
+            return await ApiRequest<AuthLogged, AuthLogin>(authLogin, "/api/auth/login");
+        }
+
+        private async Task<ResponseApi<T>> ApiRequest<T,U>(U obj, string uri)
         {
             try
             {
-                var json = JsonConvert.SerializeObject(authLogin);
+                var json = JsonConvert.SerializeObject(obj);
                 var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync("/api/auth/login", content);
+                var response = await _httpClient.PostAsync(uri, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
-                var responseApi = JsonConvert.DeserializeObject<ResponseApi<AuthLogged>>(responseContent);
+                var responseApi = JsonConvert.DeserializeObject<ResponseApi<T>>(responseContent);
 
                 if (responseApi.StatusCode == 0)
                 {
-                    return new ResponseApi<AuthLogged>
+                    return new ResponseApi<T>
                     {
                         IsSucces = false,
                         StatusCode = (int)response.StatusCode,
@@ -47,7 +57,7 @@ namespace MauiAppAdmin.Services
             }
             catch (Exception ex)
             {
-                return new ResponseApi<AuthLogged>()
+                return new ResponseApi<T>()
                 {
                     IsSucces = false,
                     StatusCode = 500,
@@ -55,5 +65,6 @@ namespace MauiAppAdmin.Services
                 };
             }
         }
+
     }
 }

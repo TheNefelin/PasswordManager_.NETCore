@@ -20,10 +20,10 @@ namespace ClassLibrary.Services.Services
             _jwtUtil = new JwtTokenUtil();
         }
 
-        public async Task<ResponseApi<object>> RegisterAsync(AuthRegister register, CancellationToken cancellationToken)
+        public async Task<ResponseApi<UserIdDTO>> RegisterAsync(AuthRegister register, CancellationToken cancellationToken)
         {
             if (!register.Password1.Equals(register.Password2))
-                return new ResponseApi<object>
+                return new ResponseApi<UserIdDTO>
                 {
                     IsSucces = false,
                     StatusCode = 400,
@@ -31,29 +31,31 @@ namespace ClassLibrary.Services.Services
                 };
 
             var (hash, salt) = _passwordUtil.HashPassword(register.Password1);
+            var userId = new UserIdDTO { IdUser = Guid.NewGuid().ToString() };
 
             try
             {
                 var result = await _connection.QueryFirstAsync<ResponseSql>(
                     new CommandDefinition(
                         $"Auth_Register",
-                        new { IdUser = Guid.NewGuid().ToString(), register.Email, HashLogin = hash, SaltLogin = salt },
+                        new { userId.IdUser, register.Email, HashLogin = hash, SaltLogin = salt },
                         commandType: CommandType.StoredProcedure,
                         transaction: default,
                         cancellationToken: cancellationToken
                     )
                 );
 
-                return new ResponseApi<object>
+                return new ResponseApi<UserIdDTO>
                 {
                     IsSucces = result.IsSucces,
                     StatusCode = result.StatusCode,
                     Message = result.Msge,
+                    Data = result.IsSucces ? userId : null,
                 };
             }
             catch (Exception ex)
             {
-                return new ResponseApi<object>
+                return new ResponseApi<UserIdDTO>
                 {
                     IsSucces = false,
                     StatusCode = 500,

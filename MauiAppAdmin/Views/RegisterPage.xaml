@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:MauiAppAdmin.Components;"
+             x:Class="MauiAppAdmin.Views.RegisterPage"
+             Title="Registrarse">
+
+    <Grid>
+        <Image Source="background.webp" Aspect="AspectFill"/>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" BackgroundColor="{StaticResource BackgroundColor80}" Margin="30,60,30,0" Stroke="White" StrokeThickness="2" StrokeShape="RoundRectangle 10" MaximumWidthRequest="400">
+                <StackLayout Padding="20">
+                    <Label Text="Registrarse" HorizontalOptions="Center" FontAttributes="Bold" FontSize="20"/>
+                    <Entry Text="{Binding AuthRegister.Email}" Placeholder="Correo"/>
+                    <Entry Text="{Binding AuthRegister.Password1}" IsEnabled="{Binding IsEnabled}" IsPassword="True" Placeholder="Contraseña"/>
+                    <Entry Text="{Binding AuthRegister.Password2}" IsEnabled="{Binding IsEnabled}" IsPassword="True" Placeholder="Repetir Contraseña"/>
+                    <Button Command="{Binding RegisterCommand}" IsEnabled="{Binding IsEnabled}" Text="Registrarse" Margin="0,15,0,0"/>
+                    <Label Text="{Binding ErrorMessage}" IsVisible="{Binding IsErrorVisible}" TextColor="Red" Margin="0,15,0,0"/>
+                </StackLayout>
+            </Border>
+        </Grid>
+        
+        <components:LoadingComponent IsVisible="{Binding IsLoading}"/>
+    </Grid>
+
+</ContentPage>

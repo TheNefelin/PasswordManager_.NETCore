@@ -22,17 +22,17 @@
                 <buttons:SfButton
                     IsEnabled="{Binding IsEnabled}"
                     Command="{Binding ClearCommand}"
-                    Background="DarkRed"
+                    Background="Black"
                     Text="Clear" TextColor="white" FontSize="11" 
-                    ImageSource="icon_shattered_512.png" ImageAlignment="Top" ImageSize="35" ShowIcon="True" WidthRequest="80" HeightRequest="80" Stroke="White" StrokeThickness="2" CornerRadius="8"
+                    ImageSource="icon_shattered_512.png" ImageAlignment="Top" ImageSize="35" ShowIcon="True" WidthRequest="80" HeightRequest="80" Stroke="White" StrokeThickness="2" CornerRadius="10"
                 />
 
                 <buttons:SfButton
                     IsEnabled="{Binding IsEnabled}"
                     Command="{Binding DownloadCommand}"
-                    Background="DarkOrange"
+                    Background="Black"
                     Text="Download" TextColor="white" FontSize="11" 
-                    ImageSource="icon_download_512.png" ImageAlignment="Top" ImageSize="35" ShowIcon="True" WidthRequest="80" HeightRequest="80" Stroke="White" StrokeThickness="2" CornerRadius="8"
+                    ImageSource="icon_download_512.png" ImageAlignment="Top" ImageSize="35" ShowIcon="True" WidthRequest="80" HeightRequest="80" Stroke="White" StrokeThickness="2" CornerRadius="10"
                 />
 
                 <buttons:SfButton
@@ -40,7 +40,7 @@
                     Command="{Binding PasswordDialogCommand}"
                     Background="Black"
                     Text="Decrypt" TextColor="white" FontSize="11" 
-                    ImageSource="icon_decrypted_512.png" ImageAlignment="Top" ImageSize="35" ShowIcon="True" WidthRequest="80" HeightRequest="80" Stroke="White" StrokeThickness="2" CornerRadius="8"
+                    ImageSource="icon_decrypted_512.png" ImageAlignment="Top" ImageSize="35" ShowIcon="True" WidthRequest="80" HeightRequest="80" Stroke="White" StrokeThickness="2" CornerRadius="10"
                 />
             </HorizontalStackLayout>
 
@@ -77,7 +77,7 @@
                                     </toolkit:Expander.Header>
                                     <toolkit:Expander.Content>
                                         <VerticalStackLayout>
-                                            <VerticalStackLayout Padding="10">
+                                            <VerticalStackLayout Padding="40,0">
                                                 <HorizontalStackLayout Spacing="10">
                                                     <Label Text="Usuario:       " FontAttributes="Bold"/>
                                                     <Label Text="{Binding Data02}"/>
@@ -87,9 +87,9 @@
                                                     <Label Text="{Binding Data03}"/>
                                                 </HorizontalStackLayout>
                                             </VerticalStackLayout>
-                                            <HorizontalStackLayout HorizontalOptions="Center" Padding="10" Spacing="20">
-                                                <ImageButton Background="Orange" Padding="5" CornerRadius="5" Source="icon_edit_512.png" HeightRequest="40" WidthRequest="100"/>
-                                                <ImageButton Background="Red" Padding="5" CornerRadius="5" Source="icon_delete_512.png" HeightRequest="40" WidthRequest="100"/>
+                                            <HorizontalStackLayout HorizontalOptions="Center" Padding="20" Spacing="20">
+                                                <Button Command="{Binding AddTaskCommand}" Background="ForestGreen" Text="Edit" ImageSource="icon_edit_512.png" CornerRadius="5" HeightRequest="40"/>
+                                                <Button Command="{Binding AddTaskCommand}" Background="Red" Text="Delete" ImageSource="icon_delete_512.png" CornerRadius="5" HeightRequest="40"/>
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
                                     </toolkit:Expander.Content>
@@ -103,7 +103,7 @@
             </ScrollView>
         </Grid>
 
-        <components:LoadingContent IsLoading="{Binding IsLoading}"/>
+        <components:LoadingComponent IsVisible="{Binding IsLoading}"/>
     </Grid>
     
 </ContentPage>

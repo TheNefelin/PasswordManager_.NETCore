@@ -28,7 +28,6 @@ namespace WebApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-
         [HttpPost]
         [Route("login")]
         public async Task<ActionResult<ResponseApi<AuthLogged>>> Login(AuthLogin loginDTO, CancellationToken cancellationToken)

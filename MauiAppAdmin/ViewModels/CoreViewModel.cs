@@ -1,5 +1,4 @@
-﻿using AndroidX.Emoji2.Text.FlatBuffer;
-using ClassLibrary.Models;
+﻿using ClassLibrary.Models;
 using ClassLibrary.Models.DTOs;
 using ClassLibrary.Models.Utils;
 using CommunityToolkit.Maui.Views;
@@ -29,6 +28,9 @@ namespace MauiAppAdmin.ViewModels
         private ObservableCollection<CoreDTO> _coreList = new();
 
         private List<CoreDTO> _allCoreList = new();
+
+        [RelayCommand]
+        private Task AddTask() => Shell.Current.GoToAsync($"chat");
 
         public ICommand ClearCommand { get; }
         public ICommand DownloadCommand { get; }
@@ -124,7 +126,7 @@ namespace MauiAppAdmin.ViewModels
                     .OrderBy(x => x.Data01)
             );
 
-            Disable();
+            Enable();
         }
 
         partial void OnSearchTextChanged(string value)
@@ -133,15 +135,22 @@ namespace MauiAppAdmin.ViewModels
 
             if (string.IsNullOrWhiteSpace(SearchText))
             {
-                CoreList = new ObservableCollection<CoreDTO>(_allCoreList);
+                CoreList.Clear();
+                foreach (var item in _allCoreList)
+                {
+                    CoreList.Add(item);
+                }
             }
             else
             {
                 var filtrados = _allCoreList
-                    .Where(x => x.Data01.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                    .Where(x => x.Data01.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
-                CoreList = new ObservableCollection<CoreDTO>(filtrados);
+                CoreList.Clear();
+                foreach (var item in filtrados)
+                {
+                    CoreList.Add(item);
+                }
             }
         }
 

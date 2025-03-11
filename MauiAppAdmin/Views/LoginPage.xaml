@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:MauiAppAdmin.ViewModels"
              xmlns:components="clr-namespace:MauiAppAdmin.Components;"
              x:Class="MauiAppAdmin.Views.LoginPage"
-             Title="LoginPage">
+             Title="Iniciar Sesión">
 
     <Grid>
         <Image Source="background.webp" Aspect="AspectFill"/>
@@ -15,21 +14,21 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" BackgroundColor="{StaticResource BackgroundColor80}" Margin="20,40,20,0" Stroke="White" StrokeThickness="2" StrokeShape="RoundRectangle 10" MaximumWidthRequest="400">
+            <Border Grid.Row="0" BackgroundColor="{StaticResource BackgroundColor80}" Margin="30,60,30,0" Stroke="White" StrokeThickness="2" StrokeShape="RoundRectangle 10" MaximumWidthRequest="400">
                 <StackLayout Padding="20">
                     <Label Text="Iniciar Sesión" HorizontalOptions="Center" FontAttributes="Bold" FontSize="20"/>
                     <Entry Text="{Binding Auth.Email}" IsEnabled="{Binding IsEnabled}" Placeholder="Usuario"/>
                     <Entry Text="{Binding Auth.Password}" IsEnabled="{Binding IsEnabled}" IsPassword="True" Placeholder="Contraseña"/>
                     <Button Command="{Binding LoginCommand}" IsEnabled="{Binding IsEnabled}" Text="Iniciar Sesións" Margin="0,15" />
-                    <Button IsEnabled="{Binding IsEnabled}" Text="Registrarse" />
-                    <Label Text="{Binding ErrorMessage}" IsVisible="{Binding IsErrorVisible}" TextColor="Red" Margin="0,15"/>
+                    <Button Command="{Binding RegisterCommand}" IsEnabled="{Binding IsEnabled}" Text="Registrarse" />
+                    <Label Text="{Binding ErrorMessage}" IsVisible="{Binding IsErrorVisible}" TextColor="Red" Margin="0,15,0,0"/>
                 </StackLayout>
             </Border>
 
             <Button Grid.Row="1" IsEnabled="{Binding IsEnabled}" BackgroundColor="{StaticResource BackgroundColor80}" ImageSource="icon_alien_512.png" HeightRequest="100" WidthRequest="100" CornerRadius="50" BorderColor="white" BorderWidth="2"/>
         </Grid>
 
-        <components:LoadingContent IsLoading="{Binding IsLoading}"/>
+        <components:LoadingComponent IsVisible="{Binding IsLoading}"/>
     </Grid>
 
 </ContentPage>

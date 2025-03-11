@@ -17,7 +17,8 @@ namespace MauiAppAdmin
         protected override Window CreateWindow(IActivationState? activationState)
         {
             var loginPage = _serviceProvider.GetRequiredService<LoginPage>();
-            return new Window(loginPage);
+
+            return new Window(new NavigationPage(loginPage));
         }
     }
 }

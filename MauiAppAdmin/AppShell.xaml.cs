@@ -1,6 +1,5 @@
 ﻿using MauiAppAdmin.Services;
 using MauiAppAdmin.Views;
-using System.Threading.Tasks;
 
 namespace MauiAppAdmin
 {
@@ -23,14 +22,8 @@ namespace MauiAppAdmin
         {
             await Storage.RemoveUser();
 
-            var currentWindow = Application.Current!.Windows.FirstOrDefault();
-            if (currentWindow != null)
-            {
-                Application.Current!.CloseWindow(currentWindow);
-            }
-
             var loginPage = _serviceProvider.GetRequiredService<LoginPage>();
-            Application.Current!.OpenWindow(new Window(loginPage));
+            App.Current.MainPage = new NavigationPage(loginPage);
         }
     }
 }

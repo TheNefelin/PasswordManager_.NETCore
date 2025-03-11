@@ -27,23 +27,27 @@ public static class MauiProgram
             BaseAddress = new Uri("https://dragonra.bsite.net")
         });
 
+        string apiKey = "Esmerilemelo-777";
+
         builder.Services.AddSingleton<IApiAuthService>(provider =>
         {
             var httpClient = provider.GetRequiredService<HttpClient>();
-            return new ApiAuthService(httpClient, "Esmerilemelo-777");
+            return new ApiAuthService(httpClient, apiKey);
         });
 
         builder.Services.AddSingleton<IApiCoreService>(provider =>
         {
             var httpClient = provider.GetRequiredService<HttpClient>();
-            return new ApiCoreService(httpClient, "Esmerilemelo-777");
+            return new ApiCoreService(httpClient, apiKey);
         });
 
-        builder.Services.AddTransient<App>();
         builder.Services.AddTransient<AppShell>();
         builder.Services.AddTransient<LoginPage>();
-        builder.Services.AddTransient<CoreViewModel>();
         builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddTransient<RegisterPage>();
+        builder.Services.AddTransient<RegisterPageModel>();
+        
+        builder.Services.AddTransient<CoreViewModel>();
         builder.Services.AddTransient<ProfileViewModel>();
 
 #if DEBUG

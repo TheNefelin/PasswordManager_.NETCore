@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiAppAdmin.Services;
+using MauiAppAdmin.Views;
 using System.Windows.Input;
 
 namespace MauiAppAdmin.ViewModels
@@ -26,14 +27,16 @@ namespace MauiAppAdmin.ViewModels
         [ObservableProperty]
         private bool isEnabled = true;
 
+        public ICommand LoginCommand { get; }
+        public ICommand RegisterCommand { get; }
+
         public LoginViewModel(IApiAuthService apiAuthService, IServiceProvider serviceProvider)
         {
             _apiAuthService = apiAuthService;
             _serviceProvider = serviceProvider;
             LoginCommand = new RelayCommand(OnLogin);
+            RegisterCommand = new RelayCommand(OnRegister);
         }
-
-        public ICommand LoginCommand { get; }
 
         private async void OnLogin()
         {
@@ -51,10 +54,9 @@ namespace MauiAppAdmin.ViewModels
 
             if (!response.IsSucces)
             {
-                //await Shell.Current.DisplayAlert($"Error {response.StatusCode}", response.Message, "OK");
-                ErrorMessage = $"Error: {response.StatusCode}, { response.Message }";
+                ErrorMessage = $"Error: {response.StatusCode}, {response.Message}";
                 IsErrorVisible = true;
-              
+
                 IsLoading = false;
                 IsEnabled = !IsLoading;
 
@@ -62,19 +64,25 @@ namespace MauiAppAdmin.ViewModels
             }
 
             await Storage.SaveUser(response.Data);
-            
-            var currentWindow = Application.Current!.Windows.FirstOrDefault();
-            if (currentWindow != null)
-            {
-                Application.Current!.CloseWindow(currentWindow);
-            }
 
-            var loginPage = _serviceProvider.GetRequiredService<AppShell>();
-            Application.Current!.OpenWindow(new Window(loginPage));
+            var appShell = _serviceProvider.GetRequiredService<AppShell>();
+            if (Application.Current?.Windows.Count > 0)
+            {
+                Application.Current.Windows[0].Page = appShell;
+            }
 
             IsLoading = false;
             IsEnabled = !IsLoading;
         }
-    }
 
+        private async void OnRegister()
+        {
+            var mainPage = Application.Current?.Windows.FirstOrDefault()?.Page;
+            if (mainPage != null)
+            {
+                var registerPage = _serviceProvider.GetRequiredService<RegisterPage>();
+                await mainPage.Navigation.PushAsync(registerPage);
+            }
+        }
+    }
 }
