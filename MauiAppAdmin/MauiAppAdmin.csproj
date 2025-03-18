@@ -82,6 +82,9 @@
 	  <MauiXaml Update="Views\ChatPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\CoreFormPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\CorePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

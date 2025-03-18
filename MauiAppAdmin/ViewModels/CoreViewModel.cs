@@ -6,6 +6,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiAppAdmin.Components;
 using MauiAppAdmin.Services;
+using MauiAppAdmin.Views;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -35,6 +37,7 @@ namespace MauiAppAdmin.ViewModels
         public ICommand ClearCommand { get; }
         public ICommand DownloadCommand { get; }
         public ICommand PasswordDialogCommand { get; }
+        public ICommand FormCommand { get; }
         public ICommand SearchTextCommand { get; }
 
         public CoreViewModel(IApiCoreService apiCoreService)
@@ -42,6 +45,7 @@ namespace MauiAppAdmin.ViewModels
             ClearCommand = new RelayCommand(OnClearCoreList);
             DownloadCommand = new RelayCommand(OnDownload);
             PasswordDialogCommand = new RelayCommand(OnShowPasswordDialog);
+            FormCommand = new RelayCommand(AddCoreForm);
             SearchTextCommand = new RelayCommand<string>(OnSearchTextChanged);
             _apiCoreService = apiCoreService;
         }
@@ -127,6 +131,30 @@ namespace MauiAppAdmin.ViewModels
             );
 
             Enable();
+        }
+
+        private TaskCompletionSource<(CoreDTO, string)> _taskCompletionSource;
+
+        private async void AddCoreForm()
+        {
+            _taskCompletionSource = new TaskCompletionSource<(CoreDTO, string)>();
+
+            var coreDTO = new CoreDTO
+            {
+                Id = 1,
+                Data01 = "Data01",
+                Data02 = "Data02",
+                Data03 = "Data03",
+                IdUser = "ABC123"
+            };
+
+            // Serializa el objeto a un string JSON para pasarlo por parámetros
+            var coreDTOJson = JsonConvert.SerializeObject(coreDTO);
+
+            //await Shell.Current.GoToAsync(nameof(CoreFormPage), true);
+            await Shell.Current.GoToAsync($"{nameof(CoreFormPage)}?coreDTO={coreDTOJson}", true);
+
+            var (resultCoreDTO, password) = await _taskCompletionSource.Task;
         }
 
         partial void OnSearchTextChanged(string value)

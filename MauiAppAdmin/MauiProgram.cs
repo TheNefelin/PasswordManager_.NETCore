@@ -46,9 +46,11 @@ public static class MauiProgram
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<RegisterPage>();
         builder.Services.AddTransient<RegisterPageModel>();
-        
+
         builder.Services.AddTransient<CoreViewModel>();
         builder.Services.AddTransient<ProfileViewModel>();
+
+        Routing.RegisterRoute(nameof(CoreFormPage), typeof(CoreFormPage));
 
 #if DEBUG
         builder.Logging.AddDebug();
